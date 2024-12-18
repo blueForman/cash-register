@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 namespace App\Cart\Domain\Model;
 
 use App\Cart\Domain\Value\CartId;
@@ -12,11 +13,13 @@ final class Cart
      * @param Product[] $items
      * @param Totals|null $totals
      */
-    public function __construct(private readonly CartId $id,
-                                private readonly Customer $customer,
-                                private array $items,
-                                private ?Totals $totals
-    ) {
+    public function __construct(
+        private readonly CartId   $id,
+        private readonly Customer $customer,
+        private array             $items,
+        private ?Totals           $totals
+    )
+    {
     }
 
     public function getId(): CartId
@@ -65,8 +68,9 @@ final class Cart
         $this->recalculateTotals();
     }
 
-    private function recalculateTotals(): void
+    public function recalculateTotals(): void
     {
+        $this->removeEmptyProductsIfThereAreAny();
         $subTotal = 0;
         $total = 0;
         foreach ($this->items as $product) {
@@ -76,5 +80,15 @@ final class Cart
         }
 
         $this->totals = new Totals($subTotal, $total);
+    }
+
+    public function removeEmptyProductsIfThereAreAny(): void
+    {
+        $products = $this->items;
+        foreach ($products as $product) {
+            if ($product->getQuantity() < 1) {
+                unset($this->items[$product->getSku()->value()]);
+            }
+        }
     }
 }

@@ -12,4 +12,6 @@ interface CartStorage
     public function findByCartId(CartId $cartId): ?Cart;
 
     public function save(Cart $cart): void;
+
+    public function delete(Cart $cart): void;
 }
