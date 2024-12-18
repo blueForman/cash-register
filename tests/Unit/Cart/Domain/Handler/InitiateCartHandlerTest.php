@@ -5,7 +5,7 @@ namespace Tests\Unit\Cart\Domain\Handler;
 
 use App\Cart\Domain\Command\InitiateCartCommand;
 use App\Cart\Domain\Command\InitiateCartHandler;
-use App\Cart\Domain\DTO\CustomerID;
+use App\Cart\Domain\Value\CustomerId;
 use App\Cart\Domain\Exception\CustomerNotFoundException;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Customer;
@@ -19,11 +19,11 @@ final class InitiateCartHandlerTest extends TestCase
     {
         $missingCustomerId = 123;
         $expectedException = CustomerNotFoundException::withId($missingCustomerId);
-        $this->expectExceptionMessage($expectedException->getMessage());
+        $this->expectExceptionObject($expectedException);
         $command = InitiateCartCommand::fromId($missingCustomerId);
 
         $customerStorage = $this->createMock(CustomerStorage::class);
-        $customerStorage->method('find')->with($command->getCustomerId())->willReturn(null);
+        $customerStorage->method('findByCustomerId')->with($command->getCustomerId())->willReturn(null);
         $handler = new InitiateCartHandler($customerStorage);
 
         $handler->handle($command);
@@ -35,7 +35,7 @@ final class InitiateCartHandlerTest extends TestCase
         $command = InitiateCartCommand::fromId($customerId);
 
         $customerStorage = $this->createMock(CustomerStorage::class);
-        $customerStorage->method('find')->with($command->getCustomerId())->willReturn(new Customer($command->getCustomerId()));
+        $customerStorage->method('findByCustomerId')->with($command->getCustomerId())->willReturn(new Customer($command->getCustomerId()));
         $handler = new InitiateCartHandler($customerStorage);
 
         $cart = $handler->handle($command);

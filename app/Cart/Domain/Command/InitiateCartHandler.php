@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace App\Cart\Domain\Command;
 
 use App\Cart\Domain\Exception\CustomerNotFoundException;
@@ -16,7 +16,7 @@ final class InitiateCartHandler
 
     public function handle(InitiateCartCommand $command): Cart
     {
-        $customer = $this->customerStorage->find($command->getCustomerId());
+        $customer = $this->customerStorage->findByCustomerId($command->getCustomerId());
 
         if (null === $customer) {
             throw CustomerNotFoundException::withId($command->getCustomerId()->value());

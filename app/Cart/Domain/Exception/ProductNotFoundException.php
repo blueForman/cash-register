@@ -1,16 +1,18 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Cart\Domain\Exception;
 
-final class CustomerNotFoundException extends \DomainException
+final class ProductNotFoundException extends \DomainException
 {
     private function __construct(string $message = "", int $code = 0, ?Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
 
-    public static function withId(int $id): self
+    public static function bySku(string $sku): self
     {
-        return new self("Customer with id {$id} not found");
+        return new self("Product with sku {$sku} not found.");
     }
 }
