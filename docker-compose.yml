@@ -1,0 +1,19 @@
+version: '3.9'
+
+services:
+    postgres:
+        image: postgres:latest
+        container_name: postgres_db
+        environment:
+            POSTGRES_USER: cash_register_user
+            POSTGRES_PASSWORD: cash_register_pass
+            POSTGRES_DB: cash_register_db
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+
+
+volumes:
+    postgres_data:
+        driver: local
