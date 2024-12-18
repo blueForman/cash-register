@@ -11,7 +11,7 @@ use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\ProductStorage;
 
-final class AddProductToCartHandler
+final class DecreaseProductQuantityHandler
 {
     public function __construct(
         private readonly CartStorage $cartStorage,
@@ -19,7 +19,7 @@ final class AddProductToCartHandler
     ) {
     }
 
-    public function handle(AddProductToCartCommand $command): Cart
+    public function handle(DecreaseProductQuantityCommand $command): Cart
     {
         if ($command->getQuantity() < 1) {
             throw InvalidQuantityException::becauseAddQuantityIsZeroOrLower();
@@ -37,7 +37,7 @@ final class AddProductToCartHandler
             throw ProductNotFoundException::bySku($command->getSku()->value());
         }
 
-        $cart->addProduct($product, $command->getQuantity());
+        $cart->decreaseProductQuantity($product, $command->getQuantity());
 
         $this->cartStorage->save($cart);
         return $cart;

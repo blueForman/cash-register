@@ -39,12 +39,28 @@ final class Cart
         return $this->totals;
     }
 
-    public function addProduct(Product $product, int $quantity): void
+    public function increaseProductQuantity(Product $product, int $quantity): void
     {
         if (isset($this->items[$product->getSku()->value()])) {
             $product = $this->items[$product->getSku()->value()];
         }
         $product->setQuantity($product->getQuantity() + $quantity);
+        $this->items[$product->getSku()->value()] = $product;
+        $this->recalculateTotals();
+    }
+
+    public function decreaseProductQuantity(Product $product, ?int $quantity): void
+    {
+        if (isset($this->items[$product->getSku()->value()])) {
+            $product = $this->items[$product->getSku()->value()];
+        }
+
+        if (null === $quantity || $quantity >= $product->getQuantity()) {
+            unset($this->items[$product->getSku()->value()]);
+            return;
+        }
+
+        $product->setQuantity($product->getQuantity() - $quantity);
         $this->items[$product->getSku()->value()] = $product;
         $this->recalculateTotals();
     }
