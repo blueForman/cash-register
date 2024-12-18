@@ -8,6 +8,11 @@ use App\Cart\Domain\Value\CartId;
 final class Cart
 {
     /**
+     * @var Product[]
+     */
+    private array $items = [];
+
+    /**
      * @param CartId $id
      * @param Customer $customer
      * @param Product[] $items
@@ -16,10 +21,13 @@ final class Cart
     public function __construct(
         private readonly CartId   $id,
         private readonly Customer $customer,
-        private array             $items,
+        array             $items,
         private ?Totals           $totals
     )
     {
+        foreach ($items as $item) {
+            $this->items[$item->getSku()->value()] = $item;
+        }
     }
 
     public function getId(): CartId
