@@ -9,23 +9,13 @@ use App\Cart\Domain\Value\CartId;
 
 final class Order
 {
-    /**
-     * @param CartId $id
-     * @param Customer $customer
-     * @param Product[] $items
-     * @param Totals|null $totals
-     */
     public function __construct(
+        private readonly string $id,
         private readonly Customer $customer,
         private array             $items,
-        private Totals            $totals,
+        private readonly Totals            $totals,
         private OrderStateEnum    $state,
     ) {
-    }
-
-    public function getId(): CartId
-    {
-        return $this->id;
     }
 
     public function getCustomer(): Customer
@@ -46,5 +36,10 @@ final class Order
     public function getState(): OrderStateEnum
     {
         return $this->state;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 }

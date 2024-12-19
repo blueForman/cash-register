@@ -5,7 +5,7 @@ namespace App\Cart\Domain\Command;
 use App\Cart\Domain\Exception\CustomerNotFoundException;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Totals;
-use App\Cart\Domain\Service\CartIdGenerator;
+use App\Cart\Domain\Service\IdGenerator;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\CustomerStorage;
 
@@ -26,7 +26,7 @@ final class InitiateCartHandler
         }
 
         $cart = new Cart(
-            CartIdGenerator::generate(),
+            IdGenerator::generateCartId(),
             $customer,
             [],
             Totals::createEmpty()

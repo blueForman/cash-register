@@ -48,7 +48,7 @@ final class CartDbStorage implements CartStorage
 
     public function delete(Cart $cart): void
     {
-        // TODO: Implement delete() method.
+        CartDbEntry::destroy($cart->getId()->value());
     }
 
     private function toModel(CartDbEntry $dbEntry): Cart
