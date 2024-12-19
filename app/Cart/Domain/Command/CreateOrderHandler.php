@@ -9,6 +9,7 @@ use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Domain\Exception\OrderCreationException;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Order;
+use App\Cart\Domain\Service\IdGenerator;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\OrderStorage;
 
@@ -21,7 +22,7 @@ final class CreateOrderHandler
     {
     }
 
-    public function handle(CreateOrderCommand $command): void
+    public function handle(CreateOrderCommand $command): Order
     {
         $cart = $this->cartStorage->findByCartId($command->getCartId());
 
@@ -34,6 +35,7 @@ final class CreateOrderHandler
         }
 
         $order = new Order(
+            IdGenerator::generateUniqueId(),
             $cart->getCustomer(),
             $cart->getProducts(),
             $cart->getTotals(),
@@ -41,6 +43,7 @@ final class CreateOrderHandler
         );
         $this->orderStorage->save($order);
         $this->cartStorage->delete($cart);
+        return $order;
     }
 
     private function isCartEmpty(Cart $cart): bool

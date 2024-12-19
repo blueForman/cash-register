@@ -14,7 +14,7 @@ use App\Cart\Domain\Model\Customer;
 use App\Cart\Domain\Model\Order;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Model\Totals;
-use App\Cart\Domain\Service\CartIdGenerator;
+use App\Cart\Domain\Service\IdGenerator;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\OrderStorage;
 use App\Cart\Domain\Value\CartId;
@@ -42,7 +42,7 @@ final class CreateOrderHandlerTest extends TestCase
 
     public function testExceptionGetsThrownWhenCartIsEmpty(): void
     {
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $command = new CreateOrderCommand($cartId);
         $expectedException = OrderCreationException::emptyCart();
         $this->expectExceptionObject($expectedException);
@@ -65,7 +65,7 @@ final class CreateOrderHandlerTest extends TestCase
 
     public function testOrderGetsCreatedWhenCartIsNotEmpty(): void
     {
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $command = new CreateOrderCommand($cartId);
 
         $cart = new Cart(

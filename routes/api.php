@@ -13,3 +13,5 @@ Route::post('/cart/initiate', [CartController::class, 'initiate']);
 Route::post('/cart/addToCart', [CartController::class, 'addToCart']);
 
 Route::post('/cart/removeFromCart', [CartController::class, 'removeFromCart']);
+
+Route::post('/cart/createOrder', [CartController::class, 'createOrder']);

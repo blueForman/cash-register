@@ -13,7 +13,7 @@ use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Customer;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Model\Totals;
-use App\Cart\Domain\Service\CartIdGenerator;
+use App\Cart\Domain\Service\IdGenerator;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\ProductStorage;
 use App\Cart\Domain\Value\CartId;
@@ -44,7 +44,7 @@ final class RemoveFromCartHandlerTest extends TestCase
 
     public function testExceptionIsThrownWhenProductIsNotFound(): void
     {
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $nonExistantProductSku = new Sku('foobar');
         $expectedException = ProductNotFoundException::bySku($nonExistantProductSku->value());
         $this->expectExceptionObject($expectedException);
@@ -74,7 +74,7 @@ final class RemoveFromCartHandlerTest extends TestCase
     {
         $expectedException = InvalidQuantityException::becauseAddQuantityIsZeroOrLower();
         $this->expectExceptionObject($expectedException);
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $productSku = new Sku('foobar');
 
         $command = new RemoveFromCartCommand($cartId, $productSku, $quatity);
@@ -107,7 +107,7 @@ final class RemoveFromCartHandlerTest extends TestCase
 
     public function testQuantityAndTotalsGetCalculatedCorrectly(): void
     {
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $productSku = new Sku('foobar');
 
         $command = new RemoveFromCartCommand($cartId, $productSku, 3);
@@ -152,7 +152,7 @@ final class RemoveFromCartHandlerTest extends TestCase
     public function testItemGetsRemovedWhenDecreasedQuantityIsGreaterOrEqualTheQuantityInCart(int $quantityInCart, int $quantityToDecrease): void
     {
 
-        $cartId = CartIdGenerator::generate();
+        $cartId = IdGenerator::generateCartId();
         $productSku = new Sku('foobar');
 
         $command = new RemoveFromCartCommand($cartId, $productSku, $quantityToDecrease);

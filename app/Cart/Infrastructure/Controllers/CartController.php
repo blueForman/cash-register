@@ -39,4 +39,11 @@ final class CartController extends Controller
 
         return new JsonResponse($cart);
     }
+
+    public function createOrder(Request $request): JsonResponse
+    {
+        $cartId = $request->input('cartId');
+        $order = $this->cartFacade->createOrder((string) $cartId);
+        return new JsonResponse($order);
+    }
 }
