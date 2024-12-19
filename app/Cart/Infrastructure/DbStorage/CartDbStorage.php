@@ -60,17 +60,19 @@ final class CartDbStorage implements CartStorage
             $items[] = Product::fromArray($item);
         }
 
+        $customerDbEntry = CustomerDbEntry::find($dbEntry->customer_id);
+
         return new Cart(
             id: new CartId($dbEntry->id),
             customer: new Customer(
-                id: new CustomerId($dbEntry->customer->id),
-                name: $dbEntry->customer->name,
-                email: $dbEntry->customer->email
+                id: new CustomerId($dbEntry->customer_id),
+                name: $customerDbEntry->name,
+                email: $customerDbEntry->email
             ),
             products: $items,
             totals: new Totals(
-                subtotal: $dbEntry->subtotal,
-                total: $dbEntry->total,
+                subtotal: (float) $dbEntry->subtotal,
+                total: (float) $dbEntry->total,
             )
         );
     }

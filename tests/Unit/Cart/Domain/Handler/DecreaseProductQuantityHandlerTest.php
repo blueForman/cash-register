@@ -6,8 +6,6 @@ namespace Tests\Unit\Cart\Domain\Handler;
 
 use App\Cart\Domain\Command\DecreaseProductQuantityCommand;
 use App\Cart\Domain\Command\DecreaseProductQuantityHandler;
-use App\Cart\Domain\Command\IncreaseProductQuantityCommand;
-use App\Cart\Domain\Command\IncreaseProductQuantityHandler;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Domain\Exception\InvalidQuantityException;
 use App\Cart\Domain\Exception\ProductNotFoundException;
@@ -22,7 +20,6 @@ use App\Cart\Domain\Value\CartId;
 use App\Cart\Domain\Value\CustomerId;
 use App\Cart\Domain\Value\Sku;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Test;
 use Ramsey\Uuid\Uuid;
 use Tests\TestCase;
 

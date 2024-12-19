@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Cart\Domain\Handler;
 
-use App\Cart\Domain\Command\IncreaseProductQuantityCommand;
-use App\Cart\Domain\Command\IncreaseProductQuantityHandler;
+use App\Cart\Domain\Command\AddProductToCartCommand;
+use App\Cart\Domain\Command\AddProductToCartHandler;
 use App\Cart\Domain\Exception\CartNotFoundException;
 use App\Cart\Domain\Exception\InvalidQuantityException;
 use App\Cart\Domain\Exception\ProductNotFoundException;
@@ -23,7 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
 
-final class IncreaseProductQuantityHandlerTest extends TestCase
+final class AddProductToCartHandlerTest extends TestCase
 {
     public function testExceptionIsThrownWhenCartDoesNotExist(): void
     {
@@ -32,11 +32,11 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
         $expectedException = CartNotFoundException::byCartId($missingCartId);
         $this->expectExceptionObject($expectedException);
 
-        $command = new IncreaseProductQuantityCommand($cartId, new Sku('foobar'), 1);
+        $command = new AddProductToCartCommand($cartId, new Sku('foobar'), 1);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage->method('findByCartId')->with($cartId)->willReturn(null);
         $productStorage = $this->createMock(ProductStorage::class);
-        $addProductToCartHandler = new IncreaseProductQuantityHandler($cartStorage, $productStorage);
+        $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
 
         $addProductToCartHandler->handle($command);
     }
@@ -48,7 +48,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
         $expectedException = ProductNotFoundException::bySku($nonExistantProductSku->value());
         $this->expectExceptionObject($expectedException);
 
-        $command = new IncreaseProductQuantityCommand($cartId, $nonExistantProductSku, 1);
+        $command = new AddProductToCartCommand($cartId, $nonExistantProductSku, 1);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage
             ->method('findByCartId')
@@ -64,7 +64,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
 
         $productStorage = $this->createMock(ProductStorage::class);
         $productStorage->method('findBySku')->with($nonExistantProductSku)->willReturn(null);
-        $addProductToCartHandler = new IncreaseProductQuantityHandler($cartStorage, $productStorage);
+        $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
         $addProductToCartHandler->handle($command);
     }
 
@@ -78,7 +78,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
         $cartId = CartIdGenerator::generate();
         $productSku = new Sku('foobar');
 
-        $command = new IncreaseProductQuantityCommand($cartId, $productSku, $quatity);
+        $command = new AddProductToCartCommand($cartId, $productSku, $quatity);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage
             ->method('findByCartId')
@@ -102,7 +102,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
 
         $productStorage = $this->createMock(ProductStorage::class);
         $productStorage->method('findBySku')->with($productSku)->willReturn($product);
-        $addProductToCartHandler = new IncreaseProductQuantityHandler($cartStorage, $productStorage);
+        $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
         $addProductToCartHandler->handle($command);
     }
 
@@ -111,7 +111,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
         $cartId = CartIdGenerator::generate();
         $productSku = new Sku('foobar');
 
-        $command = new IncreaseProductQuantityCommand($cartId, $productSku, 3);
+        $command = new AddProductToCartCommand($cartId, $productSku, 3);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage
             ->method('findByCartId')
@@ -135,7 +135,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
 
         $productStorage = $this->createMock(ProductStorage::class);
         $productStorage->method('findBySku')->with($productSku)->willReturn($product);
-        $addProductToCartHandler = new IncreaseProductQuantityHandler($cartStorage, $productStorage);
+        $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
         $resultingCart = $addProductToCartHandler->handle($command);
 
         $resultingCartProducts = $resultingCart->getProducts();

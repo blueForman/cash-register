@@ -5,7 +5,7 @@ namespace App\Cart\Domain\Command;
 use App\Cart\Domain\Value\CartId;
 use App\Cart\Domain\Value\Sku;
 
-final class IncreaseProductQuantityCommand
+final class AddProductToCartCommand
 {
     public function __construct(
         private readonly CartId $cartId,

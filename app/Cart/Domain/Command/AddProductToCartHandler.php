@@ -11,7 +11,7 @@ use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Storage\CartStorage;
 use App\Cart\Domain\Storage\ProductStorage;
 
-final class IncreaseProductQuantityHandler
+final class AddProductToCartHandler
 {
     public function __construct(
         private readonly CartStorage $cartStorage,
@@ -19,7 +19,7 @@ final class IncreaseProductQuantityHandler
     ) {
     }
 
-    public function handle(IncreaseProductQuantityCommand $command): Cart
+    public function handle(AddProductToCartCommand $command): Cart
     {
         if ($command->getQuantity() < 1) {
             throw InvalidQuantityException::becauseAddQuantityIsZeroOrLower();

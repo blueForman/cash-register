@@ -13,9 +13,6 @@ final class CartController extends Controller
     {
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function initiate(Request $request): JsonResponse
     {
         $customerId = $request->input('customerId');
@@ -23,35 +20,13 @@ final class CartController extends Controller
         return new JsonResponse($cart);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function addToCart(Request $request): JsonResponse
     {
-        //
-    }
+        $cartId = $request->input('cartId');
+        $sku = $request->input('sku');
+        $quantity = $request->input('quantity');
+        $cart = $this->cartFacade->addProductToCart((string) $cartId, (string) $sku, (int) $quantity);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        return new JsonResponse($cart);
     }
 }
