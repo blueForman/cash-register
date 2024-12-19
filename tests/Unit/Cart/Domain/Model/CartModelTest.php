@@ -6,6 +6,7 @@ namespace Tests\Unit\Cart\Domain\Model;
 
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Customer;
+use App\Cart\Domain\Model\Item;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Model\Totals;
 use App\Cart\Domain\Value\CartId;
@@ -21,33 +22,39 @@ final class CartModelTest extends TestCase
             new CartId('123'),
             new Customer(new CustomerId(1), 'name', 'email'),
             [
-                new Product(
-                    new Sku('1'),
-                    'foo',
-                    3,
-                    123,
+                new Item(
+                    new Product(
+                        new Sku('1'),
+                        'foo',
+                        123,
+                        0
+                    ),
+                    3
+                ),
+                new Item(
+                    new Product(
+                        new Sku('2'),
+                        'bar',
+                        123,
+                        0
+                    ),
                     0
                 ),
-                new Product(
-                    new Sku('2'),
-                    'bar',
-                    0,
-                    123,
-                    0
+                new Item(
+                    new Product(
+                        new Sku('3'),
+                        'baz',
+                        123,
+                        0
+                    ),
+                    -1
                 ),
-                new Product(
-                    new Sku('3'),
-                    'baz',
-                    -1,
-                    123,
-                    0
-                )
             ],
             Totals::createEmpty()
         );
 
         $cart->removeEmptyProductsIfThereAreAny();
 
-        self::assertCount(1, $cart->getProducts());
+        self::assertCount(1, $cart->getItems());
     }
 }

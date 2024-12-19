@@ -11,6 +11,7 @@ use App\Cart\Domain\Exception\InvalidQuantityException;
 use App\Cart\Domain\Exception\ProductNotFoundException;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Customer;
+use App\Cart\Domain\Model\Item;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Model\Totals;
 use App\Cart\Domain\Service\IdGenerator;
@@ -94,7 +95,6 @@ final class RemoveFromCartHandlerTest extends TestCase
         $product = new Product(
             $productSku,
             'some product',
-            0,
             0.0,
             0
         );
@@ -112,6 +112,12 @@ final class RemoveFromCartHandlerTest extends TestCase
 
         $command = new RemoveFromCartCommand($cartId, $productSku, 3);
         $cartStorage = $this->createMock(CartStorage::class);
+        $product = new Product(
+            $productSku,
+            'some product',
+            2.0,
+            25
+        );
         $cartStorage
             ->method('findByCartId')
             ->with($cartId)
@@ -119,25 +125,20 @@ final class RemoveFromCartHandlerTest extends TestCase
                 new Cart(
                     $cartId,
                     new Customer(new CustomerId(123), 'name', 'email'),
-                    [],
+                    [
+                        new Item($product, 4),
+                    ],
                     Totals::createEmpty()
                 )
             );
 
-        $product = new Product(
-            $productSku,
-            'some product',
-            4,
-            2.0,
-            25
-        );
 
         $productStorage = $this->createMock(ProductStorage::class);
         $productStorage->method('findBySku')->with($productSku)->willReturn($product);
         $removeFromCartHandler = new RemoveFromCartHandler($cartStorage, $productStorage);
         $resultingCart = $removeFromCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getProducts();
+        $resultingCartProducts = $resultingCart->getItems();
         self::assertNotNull($resultingCartProducts[$productSku->value()]);
         $productInCart = $resultingCartProducts[$productSku->value()];
         self::assertEquals(1, $productInCart->getQuantity());
@@ -157,6 +158,12 @@ final class RemoveFromCartHandlerTest extends TestCase
 
         $command = new RemoveFromCartCommand($cartId, $productSku, $quantityToDecrease);
         $cartStorage = $this->createMock(CartStorage::class);
+        $product = new Product(
+            $productSku,
+            'some product',
+            2.0,
+            25
+        );
         $cartStorage
             ->method('findByCartId')
             ->with($cartId)
@@ -164,25 +171,23 @@ final class RemoveFromCartHandlerTest extends TestCase
                 new Cart(
                     $cartId,
                     new Customer(new CustomerId(123), 'name', 'email'),
-                    [],
+                    [
+                        new Item(
+                            $product,
+                            $quantityToDecrease
+                        )
+                    ],
                     Totals::createEmpty()
                 )
             );
 
-        $product = new Product(
-            $productSku,
-            'some product',
-            $quantityInCart,
-            2.0,
-            25
-        );
 
         $productStorage = $this->createMock(ProductStorage::class);
         $productStorage->method('findBySku')->with($productSku)->willReturn($product);
         $removeFromCartHandler = new RemoveFromCartHandler($cartStorage, $productStorage);
         $resultingCart = $removeFromCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getProducts();
+        $resultingCartProducts = $resultingCart->getItems();
         self::assertArrayNotHasKey($productSku->value(), $resultingCartProducts);
 
         $totals = $resultingCart->getTotals();

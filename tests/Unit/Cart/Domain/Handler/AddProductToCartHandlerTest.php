@@ -95,7 +95,6 @@ final class AddProductToCartHandlerTest extends TestCase
         $product = new Product(
             $productSku,
             'some product',
-            0,
             0.0,
             0
         );
@@ -128,7 +127,6 @@ final class AddProductToCartHandlerTest extends TestCase
         $product = new Product(
             $productSku,
             'some product',
-            0,
             2.0,
             25
         );
@@ -138,7 +136,7 @@ final class AddProductToCartHandlerTest extends TestCase
         $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
         $resultingCart = $addProductToCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getProducts();
+        $resultingCartProducts = $resultingCart->getItems();
         self::assertNotNull($resultingCartProducts[$productSku->value()]);
         $productInCart = $resultingCartProducts[$productSku->value()];
         self::assertEquals(3, $productInCart->getQuantity());

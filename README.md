@@ -9,7 +9,6 @@ To run project run:
 
 
 # Todo:
-- introduce Item model that has Product and quantity and remove quantity from Product
 - revise naming
 - add input validation
 - add reset cart endpoint

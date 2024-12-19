@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Cart\Domain\Model\Item;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Value\Sku;
 use App\Models\Customer;
@@ -20,24 +21,28 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         $productCount = $this->faker->numberBetween(1, 5);
-        $products = [];
+        $items = [];
         for ($i = 0; $i < $productCount; $i++) {
-            $products[] = new Product(
+            $product = new Product(
                 sku: new Sku($this->faker->uuid),
                 name: $this->faker->word(),
-                quantity: $this->faker->numberBetween(1, 10),
                 price: $this->faker->randomFloat(2, 1.0, 10.0),
                 discount: $this->faker->numberBetween(0, 100),
+            );
+            $items[] = new Item(
+                product: $product,
+                quantity: $this->faker->numberBetween(1, 10),
             );
         }
 
         $subtotal = 0;
         $total = 0;
 
-        /** @var Product $product */
-        foreach ($products as $product) {
-            $subtotal += $product->getPrice() * $product->getQuantity();
-            $total += ($product->getPrice() * $product->getQuantity()) * (1 - $product->getDiscount() / 100);
+        /** @var Item $item */
+        foreach ($items as $item) {
+            $product = $item->getProduct();
+            $subtotal += $product->getPrice() * $item->getQuantity();
+            $total += ($product->getPrice() * $item->getQuantity()) * (1 - $product->getDiscount() / 100);
         }
 
         $discount = $subtotal - $total;
@@ -45,7 +50,7 @@ class OrderFactory extends Factory
         return [
             'id' => $this->faker->uuid(),
             'customer_id' => Customer::factory()->create(),
-            'items' => json_encode($products),
+            'items' => json_encode($items),
             'subtotal' => $subtotal,
             'total' => $total,
             'discount' => $discount,

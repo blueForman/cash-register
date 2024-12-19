@@ -6,6 +6,7 @@ namespace App\Cart\Infrastructure\DbStorage;
 
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Model\Customer;
+use App\Cart\Domain\Model\Item;
 use App\Cart\Domain\Model\Product;
 use App\Cart\Domain\Model\Totals;
 use App\Cart\Domain\Storage\CartStorage;
@@ -38,8 +39,9 @@ final class CartDbStorage implements CartStorage
             $dbEntry->customer_id = $customer->id;
         }
 
+
         $dbEntry->id = $cart->getId()->value();
-        $dbEntry->items = json_encode($cart->getProducts());
+        $dbEntry->items = json_encode($cart->getItems());
         $dbEntry->subtotal = $cart->getTotals()->getSubtotal();
         $dbEntry->total = $cart->getTotals()->getTotal();
         $dbEntry->discount = $cart->getTotals()->getDiscount();
@@ -57,7 +59,12 @@ final class CartDbStorage implements CartStorage
         $deserializedEntries = json_decode($dbEntry->items, true);
 
         foreach ($deserializedEntries as $item) {
-            $items[] = Product::fromArray($item);
+            $product = Product::fromArray($item['product']);
+
+            $items[] = new Item(
+                product: $product,
+                quantity: (int)$item['quantity'],
+            );
         }
 
         $customerDbEntry = CustomerDbEntry::find($dbEntry->customer_id);
@@ -69,7 +76,7 @@ final class CartDbStorage implements CartStorage
                 name: $customerDbEntry->name,
                 email: $customerDbEntry->email
             ),
-            products: $items,
+            items: $items,
             totals: new Totals(
                 subtotal: (float) $dbEntry->subtotal,
                 total: (float) $dbEntry->total,

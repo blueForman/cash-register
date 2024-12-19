@@ -27,7 +27,6 @@ final class ProductDbStorage implements ProductStorage
         return new Product(
             sku: new Sku($productDbEntry->sku),
             name: $productDbEntry->name,
-            quantity: 0,
             price: (float)$productDbEntry->price,
             discount: (int) $productDbEntry->discount
         );

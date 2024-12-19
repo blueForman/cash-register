@@ -8,25 +8,25 @@ use App\Cart\Domain\Value\CartId;
 final class Cart
 {
     /**
-     * @var Product[]
+     * @var Item[]
      */
-    private array $products = [];
+    private array $items = [];
 
     /**
      * @param CartId $id
      * @param Customer $customer
-     * @param Product[] $products
+     * @param Item[] $items
      * @param Totals|null $totals
      */
     public function __construct(
         private readonly CartId   $id,
         private readonly Customer $customer,
-        array                     $products,
+        array                     $items,
         private ?Totals           $totals
     )
     {
-        foreach ($products as $product) {
-            $this->products[$product->getSku()->value()] = $product;
+        foreach ($items as $item) {
+            $this->items[$item->getSku()->value()] = $item;
         }
     }
 
@@ -40,9 +40,9 @@ final class Cart
         return $this->customer;
     }
 
-    public function getProducts(): array
+    public function getItems(): array
     {
-        return $this->products;
+        return $this->items;
     }
 
     public function getTotals(): ?Totals
@@ -52,27 +52,33 @@ final class Cart
 
     public function increaseProductQuantity(Product $product, int $quantity): void
     {
-        if (isset($this->products[$product->getSku()->value()])) {
-            $product = $this->products[$product->getSku()->value()];
+        if (isset($this->items[$product->getSku()->value()])) {
+            $item = $this->items[$product->getSku()->value()];
+            $item->setQuantity($item->getQuantity() + $quantity);
+        } else {
+            $item = new Item($product, $quantity);
         }
-        $product->setQuantity($product->getQuantity() + $quantity);
-        $this->products[$product->getSku()->value()] = $product;
+
+        $this->items[$product->getSku()->value()] = $item;
+
         $this->recalculateTotals();
     }
 
     public function decreaseProductQuantity(Product $product, ?int $quantity): void
     {
-        if (isset($this->products[$product->getSku()->value()])) {
-            $product = $this->products[$product->getSku()->value()];
-        }
-
-        if (null === $quantity || $quantity >= $product->getQuantity()) {
-            unset($this->products[$product->getSku()->value()]);
+        if (isset($this->items[$product->getSku()->value()])) {
+            $item = $this->items[$product->getSku()->value()];
+        } else {
             return;
         }
 
-        $product->setQuantity($product->getQuantity() - $quantity);
-        $this->products[$product->getSku()->value()] = $product;
+        if (null === $quantity || $quantity >= $item->getQuantity()) {
+            unset($this->items[$product->getSku()->value()]);
+            return;
+        }
+
+        $item->setQuantity($item->getQuantity() - $quantity);
+        $this->items[$product->getSku()->value()] = $item;
         $this->recalculateTotals();
     }
 
@@ -81,10 +87,10 @@ final class Cart
         $this->removeEmptyProductsIfThereAreAny();
         $subTotal = 0;
         $total = 0;
-        foreach ($this->products as $product) {
-            $productPrice = $product->getPrice() * $product->getQuantity();
+        foreach ($this->items as $item) {
+            $productPrice = $item->getProduct()->getPrice() * $item->getQuantity();
             $subTotal += $productPrice;
-            $total += $productPrice * (1 - $product->getDiscount() / 100);
+            $total += $productPrice * (1 - $item->getProduct()->getDiscount() / 100);
         }
 
         $this->totals = new Totals($subTotal, $total);
@@ -92,10 +98,10 @@ final class Cart
 
     public function removeEmptyProductsIfThereAreAny(): void
     {
-        $products = $this->products;
-        foreach ($products as $product) {
-            if ($product->getQuantity() < 1) {
-                unset($this->products[$product->getSku()->value()]);
+        $items = $this->items;
+        foreach ($items as $item) {
+            if ($item->getQuantity() < 1) {
+                unset($this->items[$item->getSku()->value()]);
             }
         }
     }

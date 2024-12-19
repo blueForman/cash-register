@@ -24,7 +24,7 @@ POST http://127.0.0.1:8000/api/cart/addToCart
 Content-Type: application/json
 
 {
-    "cartId": "025cd9c4-53e8-4f45-94cc-8114c0eaf98c",
+    "cartId": "c4cccc3e-eed8-4253-9791-cedf4b551293",
     "sku": "7f939d0b-a0ea-4d9e-8c63-d3dfa5a660f4",
     "quantity": 3
 }
@@ -42,9 +42,24 @@ POST http://127.0.0.1:8000/api/cart/removeFromCart?XDEBUG_SESSION_START=PHPSTORM
 Content-Type: application/json
 
 {
-    "cartId": "025cd9c4-53e8-4f45-94cc-8114c0eaf98c",
+    "cartId": "36982109-4159-493e-9033-547164f3c0d7",
     "sku": "7f939d0b-a0ea-4d9e-8c63-d3dfa5a660f4",
     "quantity": 4
 }
 
 ###
+
+# curl --location 'http://127.0.0.1:8000/api/cart/createOrder?XDEBUG_SESSION_START=PHPSTORM'
+#--header 'Content-Type: application/json'
+#--data '{
+#    "cartId": "025cd9c4-53e8-4f45-94cc-8114c0eaf98c"
+#}'
+POST http://127.0.0.1:8000/api/cart/createOrder?XDEBUG_SESSION_START=PHPSTORM
+Content-Type: application/json
+
+{
+    "cartId": "c4cccc3e-eed8-4253-9791-cedf4b551293"
+}
+
+###
+

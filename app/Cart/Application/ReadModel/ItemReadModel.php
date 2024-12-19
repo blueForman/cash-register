@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Cart\Application\ReadModel;
 
-final class ProductReadModel implements \JsonSerializable
+final class ItemReadModel implements \JsonSerializable
 {
     public function __construct(
         private readonly string $sku,

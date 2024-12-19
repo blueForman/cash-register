@@ -75,7 +75,6 @@ final class CreateOrderHandlerTest extends TestCase
                 new Product(
                     new Sku('foo'),
                     'bar',
-                    2,
                     1.0,
                     0
                 )
@@ -89,7 +88,7 @@ final class CreateOrderHandlerTest extends TestCase
         $expectedOrder = new Order(
             IdGenerator::generateUniqueId(),
             $cart->getCustomer(),
-            $cart->getProducts(),
+            $cart->getItems(),
             $cart->getTotals(),
             OrderStateEnum::NEW
         );

@@ -7,7 +7,7 @@ namespace App\Cart\Application;
 use App\Cart\Application\ReadModel\CartReadModel;
 use App\Cart\Application\ReadModel\CustomerReadModel;
 use App\Cart\Application\ReadModel\OrderReadModel;
-use App\Cart\Application\ReadModel\ProductReadModel;
+use App\Cart\Application\ReadModel\ItemReadModel;
 use App\Cart\Domain\Command\AddProductToCartCommand;
 use App\Cart\Domain\Command\AddProductToCartHandler;
 use App\Cart\Domain\Command\CreateOrderCommand;
@@ -79,13 +79,13 @@ final class CartFacade
     private function toCartReadModel(Cart $cart): CartReadModel
     {
         $productReadModels = [];
-        foreach ($cart->getProducts() as $item) {
-            $productReadModels[] = new ProductReadModel(
+        foreach ($cart->getItems() as $item) {
+            $productReadModels[] = new ItemReadModel(
                 sku: $item->getSku()->value(),
-                name: $item->getName(),
-                price: $item->getPrice(),
+                name: $item->getProduct()->getName(),
+                price: $item->getProduct()->getPrice(),
                 quantity: $item->getQuantity(),
-                discount: $item->getDiscount(),
+                discount: $item->getProduct()->getDiscount(),
             );
         }
 
@@ -107,14 +107,15 @@ final class CartFacade
 
     private function toOrderReadModel(Order $order): OrderReadModel
     {
-        $productReadModels = [];
+        $itemReadModels = [];
         foreach ($order->getItems() as $item) {
-            $productReadModels[] = new ProductReadModel(
+            $product = $item->getProduct();
+            $itemReadModels[] = new ItemReadModel(
                 sku: $item->getSku()->value(),
-                name: $item->getName(),
-                price: $item->getPrice(),
+                name: $product->getName(),
+                price: $product->getPrice(),
                 quantity: $item->getQuantity(),
-                discount: $item->getDiscount(),
+                discount: $product->getDiscount(),
             );
         }
 
@@ -127,7 +128,7 @@ final class CartFacade
         return new OrderReadModel(
             id: $order->getId(),
             customer: $customerReadModel,
-            items: $productReadModels,
+            items: $itemReadModels,
             total: $order->getTotals()->getTotal(),
             subtotal: $order->getTotals()->getSubtotal(),
             discount: $order->getTotals()->getDiscount()
