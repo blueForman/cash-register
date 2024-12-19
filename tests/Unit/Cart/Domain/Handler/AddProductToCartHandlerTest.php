@@ -44,11 +44,11 @@ final class AddProductToCartHandlerTest extends TestCase
     public function testExceptionIsThrownWhenProductIsNotFound(): void
     {
         $cartId = IdGenerator::generateCartId();
-        $nonExistantProductSku = new Sku('foobar');
-        $expectedException = ProductNotFoundException::bySku($nonExistantProductSku->value());
+        $nonExistentProductSku = new Sku('foobar');
+        $expectedException = ProductNotFoundException::bySku($nonExistentProductSku->value());
         $this->expectExceptionObject($expectedException);
 
-        $command = new AddProductToCartCommand($cartId, $nonExistantProductSku, 1);
+        $command = new AddProductToCartCommand($cartId, $nonExistentProductSku, 1);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage
             ->method('findByCartId')
@@ -63,7 +63,7 @@ final class AddProductToCartHandlerTest extends TestCase
             );
 
         $productStorage = $this->createMock(ProductStorage::class);
-        $productStorage->method('findBySku')->with($nonExistantProductSku)->willReturn(null);
+        $productStorage->method('findBySku')->with($nonExistentProductSku)->willReturn(null);
         $addProductToCartHandler = new AddProductToCartHandler($cartStorage, $productStorage);
         $addProductToCartHandler->handle($command);
     }

@@ -26,13 +26,13 @@ final class CreateOrderHandlerTest extends TestCase
 {
     public function testExceptionIsThrownWhenCartIsNotFound(): void
     {
-        $nonExistantCartId = new CartId('foobar');
-        $expectedException = CartNotFoundException::byCartId($nonExistantCartId->value());
+        $nonExistentCartId = new CartId('foobar');
+        $expectedException = CartNotFoundException::byCartId($nonExistentCartId->value());
         $this->expectExceptionObject($expectedException);
-        $command = new CreateOrderCommand($nonExistantCartId);
+        $command = new CreateOrderCommand($nonExistentCartId);
 
         $cartStorage = $this->createMock(CartStorage::class);
-        $cartStorage->method('findByCartId')->with($nonExistantCartId)->willReturn(null);
+        $cartStorage->method('findByCartId')->with($nonExistentCartId)->willReturn(null);
 
         $orderStorage = $this->createMock(OrderStorage::class);
 

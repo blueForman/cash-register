@@ -45,11 +45,11 @@ final class RemoveFromCartHandlerTest extends TestCase
     public function testExceptionIsThrownWhenProductIsNotFound(): void
     {
         $cartId = IdGenerator::generateCartId();
-        $nonExistantProductSku = new Sku('foobar');
-        $expectedException = ProductNotFoundException::bySku($nonExistantProductSku->value());
+        $nonExistentProductSku = new Sku('foobar');
+        $expectedException = ProductNotFoundException::bySku($nonExistentProductSku->value());
         $this->expectExceptionObject($expectedException);
 
-        $command = new RemoveFromCartCommand($cartId, $nonExistantProductSku, 1);
+        $command = new RemoveFromCartCommand($cartId, $nonExistentProductSku, 1);
         $cartStorage = $this->createMock(CartStorage::class);
         $cartStorage
             ->method('findByCartId')
@@ -64,7 +64,7 @@ final class RemoveFromCartHandlerTest extends TestCase
             );
 
         $productStorage = $this->createMock(ProductStorage::class);
-        $productStorage->method('findBySku')->with($nonExistantProductSku)->willReturn(null);
+        $productStorage->method('findBySku')->with($nonExistentProductSku)->willReturn(null);
         $removeFromCartHandler = new RemoveFromCartHandler($cartStorage, $productStorage);
         $removeFromCartHandler->handle($command);
     }
