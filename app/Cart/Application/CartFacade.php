@@ -11,6 +11,8 @@ use App\Cart\Domain\Command\AddProductToCartCommand;
 use App\Cart\Domain\Command\AddProductToCartHandler;
 use App\Cart\Domain\Command\InitiateCartCommand;
 use App\Cart\Domain\Command\InitiateCartHandler;
+use App\Cart\Domain\Command\RemoveFromCartCommand;
+use App\Cart\Domain\Command\RemoveFromCartHandler;
 use App\Cart\Domain\Model\Cart;
 use App\Cart\Domain\Value\CartId;
 use App\Cart\Domain\Value\CustomerId;
@@ -21,6 +23,7 @@ final class CartFacade
     public function __construct(
         private readonly InitiateCartHandler $initiateCartHandler,
         private readonly AddProductToCartHandler $addProductToCartHandler,
+        private readonly RemoveFromCartHandler $removeFromCartHandler,
     ) {
     }
 
@@ -42,6 +45,19 @@ final class CartFacade
         );
 
         $cart = $this->addProductToCartHandler->handle($command);
+
+        return $this->toCartReadModel($cart);
+    }
+
+    public function removeFromCart(string $cartId, string $sku, int $quantity): CartReadModel
+    {
+        $command = new RemoveFromCartCommand(
+            cartId: new CartId($cartId),
+            sku: new Sku($sku),
+            quantity: $quantity
+        );
+
+        $cart = $this->removeFromCartHandler->handle($command);
 
         return $this->toCartReadModel($cart);
     }

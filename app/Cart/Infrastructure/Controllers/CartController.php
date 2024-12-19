@@ -29,4 +29,14 @@ final class CartController extends Controller
 
         return new JsonResponse($cart);
     }
+
+    public function removeFromCart(Request $request): JsonResponse
+    {
+        $cartId = $request->input('cartId');
+        $sku = $request->input('sku');
+        $quantity = $request->input('quantity');
+        $cart = $this->cartFacade->removeFromCart((string) $cartId, (string) $sku, (int) $quantity);
+
+        return new JsonResponse($cart);
+    }
 }
