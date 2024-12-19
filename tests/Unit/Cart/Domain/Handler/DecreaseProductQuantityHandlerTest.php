@@ -60,7 +60,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -88,7 +88,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -121,7 +121,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -140,7 +140,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
         $addProductToCartHandler = new DecreaseProductQuantityHandler($cartStorage, $productStorage);
         $resultingCart = $addProductToCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getItems();
+        $resultingCartProducts = $resultingCart->getProducts();
         self::assertNotNull($resultingCartProducts[$productSku->value()]);
         $productInCart = $resultingCartProducts[$productSku->value()];
         self::assertEquals(1, $productInCart->getQuantity());
@@ -166,7 +166,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -185,7 +185,7 @@ final class DecreaseProductQuantityHandlerTest extends TestCase
         $addProductToCartHandler = new DecreaseProductQuantityHandler($cartStorage, $productStorage);
         $resultingCart = $addProductToCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getItems();
+        $resultingCartProducts = $resultingCart->getProducts();
         self::assertArrayNotHasKey($productSku->value(), $resultingCartProducts);
 
         $totals = $resultingCart->getTotals();

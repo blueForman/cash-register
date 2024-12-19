@@ -56,7 +56,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -86,7 +86,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -119,7 +119,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
             ->willReturn(
                 new Cart(
                     $cartId,
-                    new Customer(new CustomerId(123)),
+                    new Customer(new CustomerId(123), 'name', 'email'),
                     [],
                     Totals::createEmpty()
                 )
@@ -138,7 +138,7 @@ final class IncreaseProductQuantityHandlerTest extends TestCase
         $addProductToCartHandler = new IncreaseProductQuantityHandler($cartStorage, $productStorage);
         $resultingCart = $addProductToCartHandler->handle($command);
 
-        $resultingCartProducts = $resultingCart->getItems();
+        $resultingCartProducts = $resultingCart->getProducts();
         self::assertNotNull($resultingCartProducts[$productSku->value()]);
         $productInCart = $resultingCartProducts[$productSku->value()];
         self::assertEquals(3, $productInCart->getQuantity());

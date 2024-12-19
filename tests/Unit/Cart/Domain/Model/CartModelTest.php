@@ -19,7 +19,7 @@ final class CartModelTest extends TestCase
     {
         $cart = new Cart(
             new CartId('123'),
-            new Customer(new CustomerId(1)),
+            new Customer(new CustomerId(1), 'name', 'email'),
             [
                 new Product(
                     new Sku('1'),
@@ -48,6 +48,6 @@ final class CartModelTest extends TestCase
 
         $cart->removeEmptyProductsIfThereAreAny();
 
-        self::assertCount(1, $cart->getItems());
+        self::assertCount(1, $cart->getProducts());
     }
 }

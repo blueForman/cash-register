@@ -10,23 +10,23 @@ final class Cart
     /**
      * @var Product[]
      */
-    private array $items = [];
+    private array $products = [];
 
     /**
      * @param CartId $id
      * @param Customer $customer
-     * @param Product[] $items
+     * @param Product[] $products
      * @param Totals|null $totals
      */
     public function __construct(
         private readonly CartId   $id,
         private readonly Customer $customer,
-        array             $items,
+        array                     $products,
         private ?Totals           $totals
     )
     {
-        foreach ($items as $item) {
-            $this->items[$item->getSku()->value()] = $item;
+        foreach ($products as $product) {
+            $this->products[$product->getSku()->value()] = $product;
         }
     }
 
@@ -40,9 +40,9 @@ final class Cart
         return $this->customer;
     }
 
-    public function getItems(): array
+    public function getProducts(): array
     {
-        return $this->items;
+        return $this->products;
     }
 
     public function getTotals(): ?Totals
@@ -52,27 +52,27 @@ final class Cart
 
     public function increaseProductQuantity(Product $product, int $quantity): void
     {
-        if (isset($this->items[$product->getSku()->value()])) {
-            $product = $this->items[$product->getSku()->value()];
+        if (isset($this->products[$product->getSku()->value()])) {
+            $product = $this->products[$product->getSku()->value()];
         }
         $product->setQuantity($product->getQuantity() + $quantity);
-        $this->items[$product->getSku()->value()] = $product;
+        $this->products[$product->getSku()->value()] = $product;
         $this->recalculateTotals();
     }
 
     public function decreaseProductQuantity(Product $product, ?int $quantity): void
     {
-        if (isset($this->items[$product->getSku()->value()])) {
-            $product = $this->items[$product->getSku()->value()];
+        if (isset($this->products[$product->getSku()->value()])) {
+            $product = $this->products[$product->getSku()->value()];
         }
 
         if (null === $quantity || $quantity >= $product->getQuantity()) {
-            unset($this->items[$product->getSku()->value()]);
+            unset($this->products[$product->getSku()->value()]);
             return;
         }
 
         $product->setQuantity($product->getQuantity() - $quantity);
-        $this->items[$product->getSku()->value()] = $product;
+        $this->products[$product->getSku()->value()] = $product;
         $this->recalculateTotals();
     }
 
@@ -81,7 +81,7 @@ final class Cart
         $this->removeEmptyProductsIfThereAreAny();
         $subTotal = 0;
         $total = 0;
-        foreach ($this->items as $product) {
+        foreach ($this->products as $product) {
             $productPrice = $product->getPrice() * $product->getQuantity();
             $subTotal += $productPrice;
             $total += $productPrice * (1 - $product->getDiscount() / 100);
@@ -92,10 +92,10 @@ final class Cart
 
     public function removeEmptyProductsIfThereAreAny(): void
     {
-        $products = $this->items;
+        $products = $this->products;
         foreach ($products as $product) {
             if ($product->getQuantity() < 1) {
-                unset($this->items[$product->getSku()->value()]);
+                unset($this->products[$product->getSku()->value()]);
             }
         }
     }

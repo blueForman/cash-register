@@ -35,7 +35,7 @@ final class CreateOrderHandler
 
         $order = new Order(
             $cart->getCustomer(),
-            $cart->getItems(),
+            $cart->getProducts(),
             $cart->getTotals(),
             OrderStateEnum::NEW
         );
@@ -45,7 +45,7 @@ final class CreateOrderHandler
 
     private function isCartEmpty(Cart $cart): bool
     {
-        if (empty($cart->getItems())) {
+        if (empty($cart->getProducts())) {
             return true;
         }
 

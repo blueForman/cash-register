@@ -49,7 +49,7 @@ final class CreateOrderHandlerTest extends TestCase
 
         $cart = new Cart(
             $cartId,
-            new Customer(new CustomerId(123)),
+            new Customer(new CustomerId(123), 'name', 'email'),
             [
             ],
             Totals::createEmpty()
@@ -70,7 +70,7 @@ final class CreateOrderHandlerTest extends TestCase
 
         $cart = new Cart(
             $cartId,
-            new Customer(new CustomerId(123)),
+            new Customer(new CustomerId(123), 'name', 'email'),
             [
                 new Product(
                     new Sku('foo'),
@@ -88,7 +88,7 @@ final class CreateOrderHandlerTest extends TestCase
 
         $expectedOrder = new Order(
             $cart->getCustomer(),
-            $cart->getItems(),
+            $cart->getProducts(),
             $cart->getTotals(),
             OrderStateEnum::NEW
         );
